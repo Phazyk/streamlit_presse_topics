@@ -34,15 +34,20 @@ if genre != "All":
     data = data[data["genre"]==genre]
 article = st.dataframe(data[["journal","titre","date",f"topic_{n_topic}"]],on_select="rerun",selection_mode = "single-cell",hide_index=True)
 
-with st.spinner("Wait for it...", show_time=True):
-    try : ligne = article.selection["cells"][0][0]
-    except : 
-        st.info("Cliquez sur le tableau pour afficher un article.")
-        st.stop()
+
+try : ligne = article.selection["cells"][0][0]
+except : 
+    st.info("Cliquez sur le tableau pour afficher un article.")
+    st.stop()
+def replace_ele(x):
+    return ":orange-background[{}]".format(x.group())
+texte = data.iloc[int(ligne),4]
+if st.toggle("Électrique",value = True):
+    texte=re.sub("électriques?",replace_ele,texte,count=0,flags=re.IGNORECASE)
 st.subheader(f"{data.iloc[ligne,1]}")
 st.badge(f"{data.iloc[ligne,2]} - {data.iloc[ligne,7]}")
 
-st.write(data.iloc[int(ligne),4])
+st.write(texte)
 
 
 
