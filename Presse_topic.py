@@ -3,8 +3,8 @@ import re
 import numpy as np
 import datetime
 import streamlit as st
-st.set_page_config(layout = "wide")
-st.sidebar()
+st.set_page_config(layout = "wide",initial_sidebar_state=None)
+
 col1, col2 = st.columns(2)
 with col1:
     uploaded_file_article = st.file_uploader("CSV des articles", type=["csv"])
