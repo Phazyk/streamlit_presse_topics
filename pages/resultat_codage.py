@@ -5,14 +5,19 @@ import datetime
 import streamlit as st
 st.set_page_config(layout = "wide")
 
+if "verbatim" not in st.session_state:
+    st.session_state.verbatim = pd.DataFrame()
+
 col1, col2 = st.columns(2)
 with col1:
-    uploaded_file_article = st.file_uploader("CSV des verbatim", type=["csv"])
-if uploaded_file_article is None:
-    st.warning("En attente du fichier du codage")
-    st.stop()
+    uploaded_file_verbatim = st.file_uploader("CSV des verbatim", type=["csv"])
+if len(st.session_state.verbatim) == 0:
+    if uploaded_file_verbatim is None:
+        st.warning("En attente du fichier du codage")
+        st.stop()
+    st.session_state.verbatim = pd.read_csv(uploaded_file_verbatim,index_col="Unnamed: 0")
 
-df_verbatim = pd.read_csv(uploaded_file_article,index_col="Unnamed: 0")
+df_verbatim = st.session_state.verbatim
 df_article = df_verbatim.drop_duplicates("article_id")[["article_id","titre","texte","journal","annee_mois","genre","annee"]]
 df_article = df_article.set_index("article_id",drop=False)
 tag_options = list(df_verbatim.tag.unique())

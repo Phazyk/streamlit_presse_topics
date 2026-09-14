@@ -5,21 +5,32 @@ import datetime
 import streamlit as st
 st.set_page_config(layout = "wide")
 
+if "article_topic" not in st.session_state:
+    st.session_state.article_topic = pd.DataFrame()
+
+if "topic" not in st.session_state:
+    st.session_state.topic = pd.DataFrame()
+
 col1, col2 = st.columns(2)
 with col1:
     uploaded_file_article = st.file_uploader("CSV des articles", type=["csv"])
-if uploaded_file_article is None:
-    st.warning("En attente du fichier d'articles")
-    st.stop()
-    
+if len(st.session_state.article_topic) == 0:
+    if uploaded_file_article is None:
+        st.warning("En attente du fichier d'articles")
+        st.stop()
+    st.session_state.article_topic = pd.read_csv(uploaded_file_article,index_col="Unnamed: 0.1")
+
 with col2:
     uploaded_file_topics = st.file_uploader("CSV des topics", type=["csv"])
-if uploaded_file_topics is None:
-    st.warning("En attente du fichier de topics")
-    st.stop()
+if len(st.session_state.topic) == 0:
+    if uploaded_file_topics is None:
+        st.warning("En attente du fichier de topics")
+        st.stop()
+    st.session_state.topic = pd.read_csv(uploaded_file_topics,index_col = "Unnamed: 0")
 
-topics = pd.read_csv(uploaded_file_topics,index_col = "Unnamed: 0")
-df = pd.read_csv(uploaded_file_article,index_col="Unnamed: 0.1")
+
+df = st.session_state.article_topic
+topics = st.session_state.topic
 n_topic = st.number_input("Topic",min_value=0,max_value=len(topics.columns)-1)
 
 
