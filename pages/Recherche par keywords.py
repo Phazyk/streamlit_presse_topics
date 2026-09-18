@@ -26,10 +26,10 @@ recherche = "N/A"
 col1, col2 = st.columns([1,1])
 with col1:
 #Sélection des variables
+    genre = st.segmented_control("Genre",option_genre,default="Tout")
     periode = st.slider("Période", min_value=df["annee"].min(),max_value=df["annee"].max(),value=(df["annee"].min(),df["annee"].max()))
 
-    genre = st.segmented_control("Genre",option_genre,default="Tout")
-
+with col2:
     ou_et = st.selectbox("Opérateur logique entre les mots-clés",["OU","ET"])
 
     keyword = st.text_input("Mots-clés",label_visibility="visible",help="Liste de mots-clés séparés par une virgule")
@@ -40,7 +40,7 @@ for mot in keyword.split(","):
     df["recherche"] += df["texte"].apply(lambda x: not re.search(mot,x,re.IGNORECASE)==None)
 
 
-df_afficher = df[(df["annee_mois"]>=periode[0]) & (df["annee_mois"]<=periode[1])]
+df_afficher = df[(df["annee"]>=periode[0]) & (df["annee"]<=periode[1])]
 
 if genre!="Tout":
     df_afficher = df[df["genre"]==genre]
@@ -76,8 +76,9 @@ try:
     if ele:
         texte=re.sub("électriques?",replace_ele,texte,count=0,flags=re.IGNORECASE)
     if search:
-        for mot in keyword.split(","):
-            texte=re.sub(mot,replace_search,texte,count=0,flags=re.IGNORECASE)
+        if keyword!="":
+            for mot in keyword.split(","):
+                texte=re.sub(mot,replace_search,texte,count=0,flags=re.IGNORECASE)
     #with col3:
         #st.code(article,language="python")
     st.subheader(df_afficher.iloc[int(ligne),0])
