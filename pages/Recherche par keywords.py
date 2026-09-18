@@ -4,7 +4,7 @@ import numpy as np
 import datetime
 from datetime import datetime
 import streamlit as st
-import pytz
+
 
 if "article_topic" not in st.session_state:
     st.session_state.article_topic = pd.DataFrame()
@@ -26,7 +26,7 @@ recherche = "N/A"
 col1, col2 = st.columns([1,1])
 with col1:
 #Sélection des variables
-    dt_min,dt_max = st.date_input("Période",value=(df["annee_mois"].min(),df["annee_mois"].max()),min_value=df["annee_mois"].min(), max_value = df["annee_mois"].max())
+    periode = st.slider("Période", min_value=df["annee"].min(),max_value=df["annee"].max(),value=(df["annee"].min(),df["annee"].max()))
 
     genre = st.segmented_control("Genre",option_genre,default="Tout")
 
@@ -34,17 +34,13 @@ with col1:
 
     keyword = st.text_input("Mots-clés",label_visibility="visible",help="Liste de mots-clés séparés par une virgule")
 
-
-dt_min = datetime.combine(dt_min, datetime.min.time()).replace(tzinfo=pytz.UTC)
-dt_max = datetime.combine(dt_max, datetime.min.time()).replace(tzinfo=pytz.UTC)
-
 keyword = re.sub("\s*,\s",",",keyword)
 df["recherche"] = 0
 for mot in keyword.split(","):
     df["recherche"] += df["texte"].apply(lambda x: not re.search(mot,x,re.IGNORECASE)==None)
 
 
-df_afficher = df[(df["annee_mois"]>=dt_min) & (df["annee_mois"]<=dt_max)]
+df_afficher = df[(df["annee_mois"]>=periode[0]) & (df["annee_mois"]<=periode[1])]
 
 if genre!="Tout":
     df_afficher = df[df["genre"]==genre]
