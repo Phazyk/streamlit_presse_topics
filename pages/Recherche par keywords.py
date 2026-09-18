@@ -43,7 +43,7 @@ for mot in keyword.split(","):
 df_afficher = df[(df["annee"]>=periode[0]) & (df["annee"]<=periode[1])]
 
 if genre!="Tout":
-    df_afficher = df[df["genre"]==genre]
+    df_afficher = df_afficher[df_afficher["genre"]==genre]
 
 if ou_et == "OU":
     df_afficher = df_afficher[df["recherche"]!=0]
